@@ -87,34 +87,100 @@ Below is a example of log JSON file
 
 ## 3 New Schema
 
+There are 1 fact table (songplays), and 4 dimensional tables (songs, artists, time and users).
+
+Below is the ERD for this new schema.
+
 
 ![MusicApp, the New Schema](./assets/images/NewSchema.png)
 
 
+Although redshift does not enforce PrimaryKey, ForeignKey, 
+here all the DDL DML operations are follow the order as these rules are enforced.
+Create *artists* first, then *songs*, then other *time* and *users*, finally *songplays*.
 
 
 
 ## 4 ETL
 
-there are two staging table in the cluster: staging_events, staging_songs,
-purpose is to load data into these staging tables, instead of directly into fact&dimensional tables.
+There are two sections of the ETL job, first, using COPY command 
+to bulk load data from S3
+to staging tables in Redshift cluster, 
+second, tranform and upsert data in staging tables into tables of new schema.
 
-ETL-1 staging -> dimensional tables
+
+**step 1: load data from s3**
+
+Here is the Amazon tutorial for COPY from s3, [link]((https://docs.aws.amazon.com/redshift/latest/dg/tutorial-loading-data-upload-files.html) ) 
+including copy JSON files, how to use JSON_Path file, how to check the error during loading, etc..
+
+**step 2: upsert data into dimension tables**
+
+Because Amazon [Redshift does not enforce unique, primary-key, and foreign-key constraints](https://docs.aws.amazon.com/redshift/latest/dg/c_best-practices-defining-constraints.html).
+during the upsert, using temp tables to remove duplicate in the target table.
+
+
 
 
 ![MusicApp, ETL1](./assets/images/ETL-1.png)
 
-ETL-2 staging -> dimensional tables
+
 
 
 ![MusicApp, ETL2](./assets/images/ETL-2.png)
 
-ETL-3 staging -> fact table
+**step 3: upsert data into fact table**
+
+It's OK to just join two staging tables and insert results into song_plays.
+
+However, if there will be another ETL from S3, it's better to get data into dimension table *songs* and *artists*,
+then Join them with *staging_events*, because its data set should be larger than the dataset in one staging table.
+Plus, we had already remove those duplicates, efficience should be must better to join with dimension tables. 
+
 
 ![MusicApp, ETL3](./assets/images/ETL-3.png)
 
 
-@@
+## 5 About the CloudDWH_MusicStreaming.ipynb
+
+*CloudDWH_MusicStreaming.ipynb* contain several sections:
+
+	PART 1 _ Create IAM role and attach policy
+		1.1 Parse 'dwh_1.cfg' file
+		1.2 Create Resources & Clients
+		1.3 Create IAM role
+	Part 2 _ Create Redshift Cluster
+		2.1 Create & Validate Cluster
+		2.2 Set Security Group and CIDR
+	Part 3 _ ETL
+		3.1 Create Staging Tables & New Schema
+		3.2 ETL (Load,Transform,Insert)
+	Part 4 _ HOUSE KEEPING
+
+**Recommendation:**
+
+- If you have AMAZON AWS account, and prefer a Iac approach, you can follow the steps in this .ipynb file.
+to set your cluster, to create roles and assign to cluster, to set the Security group and CIDR,
+with only your AccessKey (KEY and SECRET).
+
+- If you prefer it manually, do it manually, and jump to PART 3 and start from there.
+
+You can run .py in this files and check whether tables created or not.
+
+![](./assets/images/jupyter-createtable.png)
+
+After inserting data, check how many rows are insert into target table,
+
+![](./assets/images/jupyter-etl.png)
+
+## 6 Data Analysis Using Current Data
+
+
+
+
+
+'------This is the end.-------------'
+
 
 
 
