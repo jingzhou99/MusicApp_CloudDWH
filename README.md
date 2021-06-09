@@ -11,24 +11,48 @@ For this purpose, data engineer need to create and configue a AWS redshift clust
  copy data from S3, and insert into new created tables.
 
 ## 1 How to Run the Python Scripts
-There are two main python files:
-1. First, run *create_tables.py* to create tables in Redshift Cluster.
-2. Then, run *ETL.py* to tranform and insert data into new created tables.
-
-Before running these python scripts, redshift cluster as well as role for reading s3
- must be created. 
-
-You can manually do that, and run above two python scripts in terminal.
-Or, you can have your use jupyternotebook file *CloudDWH_MusicStreaming.ipynb* to create it in a Iac approach.
 
 
+
+	fiels in this repo:
 	CloudDWH_MusicStreaming.ipynb	--AWS Iac, run python scripts, analytics query
 	create_tables.py		--Create 2 staging tables and 5 fact_dimensional tables
 	sql_queries.py			--All the DDL DML
 	ETL.py				--Transform, upsert data
 	dwh.cfg				--Configuration (AWS Access key, cluster host, ARN, S3 bucket)
 
+There are two main python files:
+1. First, run *create_tables.py* to create tables in Redshift Cluster.
+2. Then, run *ETL.py* to tranform and insert data into new created tables.
 
+But:
+
+Before running these python scripts, redshift cluster as well as role for reading s3
+ must be created. 
+
+You can 
+ - manually do that, and run above two python scripts in terminal.
+ - Or, you can have your use jupyternotebook file *CloudDWH_MusicStreaming.ipynb* to create it in a Iac approach.
+
+If you choose Iac, all the Iac code are scripted in .ipynb file, 
+and it has following section:
+
+	PART 1 _ Create IAM role and attach policy
+		1.1 Parse 'dwh_1.cfg' file
+		1.2 Create Resources & Clients
+		1.3 Create IAM role
+	Part 2 _ Create Redshift Cluster
+		2.1 Create & Validate Cluster
+		2.2 Set Security Group and CIDR
+	Part 3 _ ETL
+		3.1 Create Staging Tables & New Schema
+		3.2 ETL (Load,Transform,Insert)
+	Part 4 _ Data Analytics
+		4.1 How many users in total?
+		4.2 How many active users?
+		4.3 Top 10 songs
+		4.4 How many songs been played for each month?
+	Part 5 _ Vacum/Analyze/Delete Cluster/Delete Role
 
 
 
@@ -155,7 +179,12 @@ Plus, we had already remove those duplicates, efficience should be must better t
 	Part 3 _ ETL
 		3.1 Create Staging Tables & New Schema
 		3.2 ETL (Load,Transform,Insert)
-	Part 4 _ HOUSE KEEPING
+	Part 4 _ Data Analytics
+		4.1 How many users in total?
+		4.2 How many active users?
+		4.3 Top 10 songs
+		4.4 How many songs been played for each month?
+	Part 5 _ Vacum/Analyze/Delete Cluster/Delete Role
 
 **Recommendation:**
 
@@ -165,7 +194,7 @@ with only your AccessKey (KEY and SECRET).
 
 - If you prefer it manually, do it manually, and jump to PART 3 and start from there.
 
-You can run .py in this files and check whether tables created or not.
+You can run .py in this *Part 3* and check whether tables created or not.
 
 ![](./assets/images/jupyter-createtable.png)
 
@@ -174,24 +203,18 @@ After inserting data, check how many rows are insert into target table,
 ![](./assets/images/jupyter-etl.png)
 
 ## 6 Data Analysis Using Current Data
+Data analytics is the part 4 of *CloudDWH_MusicStreaming.ipynb*. 
+ - 4.1 How many users in total?
+ - 4.2 How many active users?
+ - 4.3 Top 10 songs
+ - 4.4 How many songs been played for each month?
+
+More analytics queries can be added here based on business requirement.
 
 
 
 
 
-'------This is the end.-------------'
 
 
-
-
-The README file includes 
-a summary of the project, 
-how to run the Python scripts, 
-explanation of the files in the repository. 
-
-Comments are used effectively
-each function has a docstring.
-
-17. Discuss the purpose of this database in context of the startup, Sparkify, and their analytical goals.
-18. State and justify your database schema design and ETL pipeline.
-19. [Optional] Provide example queries and results for song play analysis.
+'--------------------This is the end.-----------------------'
