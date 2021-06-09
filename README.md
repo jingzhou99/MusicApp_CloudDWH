@@ -135,7 +135,7 @@ second, tranform and upsert data in staging tables into tables of new schema.
 
 **step 1: load data from s3**
 
-Here is the Amazon tutorial for COPY from s3, [link]((https://docs.aws.amazon.com/redshift/latest/dg/tutorial-loading-data-upload-files.html) ) 
+Here is the Amazon tutorial for [COPY from s3](https://docs.aws.amazon.com/redshift/latest/dg/tutorial-loading-data-upload-files.html),
 including copy JSON files, how to use JSON_Path file, how to check the error during loading, etc..
 
 **step 2: upsert data into dimension tables**
