@@ -329,7 +329,7 @@ SELECT
     e.userAgent AS user_agent
 FROM 
     staging_events AS e
-JOIN 
+LEFT JOIN 
     (SELECT
         s.song_id,
         s.title,
